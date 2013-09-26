@@ -1,0 +1,34 @@
+{
+	"name": "rnaworld",
+		"file": "data/invisdemo-path.json",
+		"refseq": "data/ref.seq",
+		"refcoords":"data/ref.xy",
+		"frame":{
+			"type":"pca", 
+			"file":"data/rnaworld.frm"
+			},
+		"numOfPopulations":2,
+		"adj":"data/all.adj1",
+		"populations": [
+		{
+			"name":"preselection",
+			"type":"control",
+			"file":"data/sampled-pop.seq",
+			"coordsFile":"data/pop.xy",
+			"statsFile":"data/pop.stat",
+			"refdist":"data/pop.tor", 
+			"enet":"data/pop.net"
+}, 
+{
+	"name":"population1",
+	"type":"variable",
+	"file":"data/sampled-pop1.seq",
+	"coordsFile": "data/pop1.xy",
+	"statsFile":"data/pop1.stat",
+	"refdist":"data/pop1.tor",
+  "enet":"data/pop1.net"
+}], 
+	"stats":{
+		"file":"data/rnaworld.stat"
+	}
+}

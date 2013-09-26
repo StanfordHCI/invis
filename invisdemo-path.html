@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<style>
+	html, body, body div, span, object, iframe, h1, h2, h3, h4, h5, h6, p,
+	blockquote, pre, abbr, address, cite, code, del, dfn, em, img, ins, kbd, q,
+	samp, small, strong, sub, sup, svg, var, b, i, dl, dt, dd, ol, ul, li, fieldset,
+	form, label, legend, table, caption, tbody, tfoot, thead, tr, th, td,
+	article, aside, figure, footer, header, hgroup, menu, nav, section, time,
+	mark, audio, video {
+		margin: 0;
+		padding: 0;
+		border: 0;
+		outline: 0;
+	    font-size: 100%;
+		vertical-align: baseline;
+		background: transparent;
+	}
+	/*
+	circle.clicked {
+	stroke-width: 4;
+	}
+	rect {
+		shape-rendering: crispEdges;
+	}
+  circle.highlighted {
+    fill-opacity:0.1; 
+    stroke-opacity:0.1
+  } */
+</style>
+<style>	
+	@import url(style/bootstrap/css/bootstrap.css);
+	@import url(style/bootstrap/css/bootstrap-responsive.css);
+</style>
+<body>
+	<div id="workspace"> 
+		<div id="panel-top">
+		</div>
+		<div id="panel-left">
+
+			<input id="file-browse" type="file" style="display:none">
+
+			<button class="btn btn-large btn-block btn-primary" type="button">load</button>
+			<button class="btn btn-large btn-block" type="button" style="ws:pre" onclick="document.getElementById('file-browse').click()"> export <i class="icon-share-alt"></i></button>
+			<button title="show/hide the reference sequence" id="refseq-button" class="btn btn-large btn-block" type="button">refseq</button>
+			<button title="compute the shortest path from the reference to the selected sequence" id="path-button" class="btn btn-large btn-block" type="button">path</button> 
+			<input title="filter based on distance from the reference" id="filter" type="range" min="0" max="150" value="1" style="position:absolute; top:200px; width:100%;height:150px;-webkit-appearance:slider-vertical">
+			<span id="filter-label" class="label label-info" style="position:absolute;left:10px;top:360px;width:75%"><center>refdist</center></span>
+			<input  title="show epsilon networks" id="enet" type="range" min="0" max="100" value="1" style="position:absolute; top:400px; width:100%;height:100px;-webkit-appearance:slider-vertical">
+			<span id="enet-label" class="label label-info" style="position:absolute;left:10px;top:510px;width:75%"><center>enet</center></span>
+			<form id="logiclist" style="position:absolute;left:20px;top:550px;">
+				<input id="aggregate-and" title="aggregate selection with AND" type="radio" name="op" value="and"> AND<br>
+				<input id="aggregate-or" title="aggregate selection with OR" type="radio" name="op" value="or"> OR<br>
+				<input id="aggregate-not" title="negate aggregated selection" type="checkbox" name="op" value="not"> NOT 
+				<button id="aggregate-reset" class="btn btn-middle btn-block" type="reset" style="ws:pre"><i class="icon-repeat"></i> reset</button>
+			</form>
+		</div>
+		<div id="canvas">
+		</div>
+		<div id="panel-right">
+		</div>
+		<div id="panel-bottom">
+		</div>
+	</div>
+	<script type="text/javascript" src="invislayout.js"></script>
+	<script type="text/javascript" src="lib/d3.v2.js"></script>
+	<script type="text/javascript" src="lib/colorbrewer.js"></script>
+	<script type="text/javascript" src="model/rnapop.js"></script>
+	<script type="text/javascript" src="model/frame.js"></script>
+	<script type="text/javascript" src="model/collection.js"></script>
+	<script type="text/javascript" src="vis/heatmap.js"></script>
+	<script type="text/javascript" src="vis/verticalstackedbar.js"></script>
+	<script type="text/javascript" src="vis/scatterplot.js"></script>
+	<script type="text/javascript" src="vis/path.js"></script>
+	<script type="text/javascript" src="utils/cumsum.js"></script>
+	<script type="text/javascript" src="utils/newopts.js"></script>
+	<script type="text/javascript" src="utils/transpose.js"></script>
+	<script type="text/javascript" src="utils/normalize.js"></script>
+  <script type="text/javascript" src="utils/graph.js"></script>
+  <script type="text/javascript" src="utils/dijkstra.js"></script>
+  <script type="text/javascript" src="utils/minheap.js"></script>
+  <script type="text/javascript" src="model/rnaworld.js"></script>
+	<script type="text/javascript" src="vis/rnaworldscatterplot.js"></script>
+	<script type="text/javascript" src="vis/rnaworldstatvis.js"></script>
+	<script type="text/javascript" src="vis/rnapopstackedbar.js"></script>
+	<script type="text/javascript" src="vis/legend.js"></script>
+  <script type="text/javascript" src="vis/dropshadow.js"></script>
+
+	<!-- <script src="./js/MIDI/AudioDetect.js" type="text/javascript"></script>
+	<script src="./js/MIDI/LoadPlugin.js" type="text/javascript"></script>
+	<script src="./js/MIDI/Plugin.js" type="text/javascript"></script>
+	<script src="./js/MIDI/Player.js" type="text/javascript"></script>
+	<script src="./js/Window/DOMLoader.XMLHttp.js" type="text/javascript"></script>
+	<script src="./js/Window/DOMLoader.script.js" type="text/javascript"></script>
+	---> 
+	<script type="text/javascript">
+
+		invisLayout(); 
+
+		//window.onload = function () {
+		//MIDI.loadPlugin({
+		// soundfontUrl: "./soundfont/",
+		// instrument: "acoustic_grand_piano-mp3",
+		// callback: function() {
+		// var delay = 0; // play one note every quarter second
+		// var note = 50; // the MIDI note
+		// var velocity = 127; // how hard the note hits
+		// // play the note
+		// MIDI.setVolume(0, 127);
+		// MIDI.noteOn(0, note, velocity, delay);
+		// MIDI.noteOff(0, note, delay + 0.75);} 
+		// }); 
+		// 
+		// }
+		// 
+
+		//load the rna world   
+		var rnaworld = new RNAWorld("data/invisdemo-path.json"); 
+
+		//create views & visualizations for the rna world   
+		var canvas = d3.select("#canvas"); 
+		var vis1   = new RNAWorldScatterplot(rnaworld,canvas); 
+		var legend = new Legend(vis1, d3.select("#panel-right"));  
+
+		//add interactions 
+		legend.addToggleInteraction(); 
+
+		//mouse 
+
+		vis1.addMouseClick(); 
+
+		//brush 
+		vis1.addBrush(); 
+
+		//button 
+		//load 
+		/*
+			 d3.select("#load")
+			 .append("input")
+			 .attr("type", "file")
+			 .on("change",alert(this.value)); 
+		 */   
+
+		d3.select("#refseq-button")
+		.on("click",function(){
+				if(d3.select(this).classed("active")){ 
+				vis1.hideRefseq(); 
+				d3.select(this).classed("active", false); 
+				}else{ 
+				d3.select(this).classed("active", true); 
+				vis1.showRefseq();
+				}
+				}); 
+
+		d3.select("#path-button")
+		.on("click", function(){
+        vis1.shortestPath();
+        }); 
+
+		//filter 
+		d3.select("#filter")
+		.on("change", function(d){
+				d3.select("#filter-label")
+				.text("refseq:"+this.value);
+				vis1.filter(this.value); 	
+				}); 
+
+//filter 
+d3.select("#enet")
+.on("change", function(d){
+		d3.select("#enet-label")
+		.text("enet:"+this.value);
+		vis1.epsilonFilter(this.value); 	
+		}); 
+
+var aggregateAND = d3.select("#aggregate-and"), 
+		aggregateOR  = d3.select("#aggregate-or"), 
+		aggregateNOT = d3.select("#aggregate-not"); 
+
+aggregateAND.on("change",function(){
+		console.log("and checked"); 
+		vis1.aggregation(true,"and"); 
+});
+
+aggregateOR.on("change",function(){
+		console.log("or checked"); 
+		vis1.aggregation(true,"or"); 
+});
+
+
+//aggregation 
+d3.select("#aggregate-reset")
+.on("click", function(){
+		console.log("resetting..."); 
+		vis1.aggregation(false); 
+		}); 
+
+var bp = d3.select("#panel-bottom"); 
+var lp = d3.select("#panel-left"); 
+
+var opts = newOpts(); 
+opts.pad.left = parseFloat(canvas.style("left"));
+	// console.log(canvas.style("width"));
+opts.size.w = parseFloat(canvas.style("width"));
+opts.size.h = 16; 
+
+var seq = d3.range(rnaworld.refseq_.length); 
+var vis2 = new Heatmap(seq, bp, opts);
+vis2.addRowLabels([" "]); 
+
+var pb = d3.select("#panel-bottom");
+var lopts = newOpts();  
+lopts.pos.x =opts.pad.left+opts.size.w+5; 
+lopts.pos.y= opts.pos.y; 
+lopts.size.h=8*opts.size.h; 
+lopts.size.w=parseInt(d3.select("#panel-right").style("width")); 
+lopts.icon = {w:6, h:16};
+lopts.type=0;
+var legend2= new Legend(vis2, pb, lopts);  
+legend2.marks_.style("stroke","none"); 
+legend2.marks_.style("font-size", "4px"); 
+opts.pos.y=16; 
+
+var vis3      = new Heatmap(rnaworld.refseq_, bp, opts);
+vis3.addRowLabels(["reference"]); 
+vis3.linkToScatterplot(vis1); 
+// vis1.linkToHeatmap(vis3); 
+vis1.updateLinkToHeatmap(vis2); 
+
+
+opts.pos.y=60;
+opts.pos.x=0;
+var vis4 = new RNAWorldStatvis(rnaworld,bp,opts)
+
+	</script>
+</body>
+</html>
+
