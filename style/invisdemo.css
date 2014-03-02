@@ -42,8 +42,10 @@ form#logiclist {
   position: absolute;
   left: 20px;
   top: 550px;
+  width: 70px;
 }
 
 button#aggregate-reset {
   ws: pre;
+  margin-top: 10px
 }
