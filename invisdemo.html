@@ -3,25 +3,26 @@
 <head>
   <link href="style/bootstrap/css/bootstrap.css" rel="stylesheet">
   <link href="style/bootstrap/css/bootstrap-responsive.css" rel="stylesheet">
+  <link href="style/invisdemo.css" rel="stylesheet">
 </head>
 <body>
   <div id="workspace">
     <div id="panel-top"></div>
     <div id="panel-left">
-      <input id="file-browse" type="file" style="display:none">
+      <input id="file-browse" type="file">
       <button class="btn btn-large btn-block btn-primary" type="button">load</button>
-      <button class="btn btn-large btn-block" type="button" style="ws:pre" onclick="document.getElementById('file-browse').click()"> export <i class="icon-share-alt"></i></button>
+      <button id="export" class="btn btn-large btn-block" type="button" onclick="document.getElementById('file-browse').click()"> export <i class="icon-share-alt"></i></button>
       <button title="show/hide the reference sequence" id="refseq-button" class="btn btn-large btn-block" type="button">refseq</button>
       <button title="compute the shortest path from the reference to the selected sequence" id="path-button" class="btn btn-large btn-block" type="button">path</button>
-      <input title="filter based on distance from the reference" id="filter" type="range" min="0" max="150" value="1" style="position:absolute; top:200px; width:100%;height:150px;-webkit-appearance:slider-vertical">
-      <span id="filter-label" class="label label-info" style="position:absolute;left:10px;top:360px;width:75%"><center>refdist</center></span>
-      <input  title="show epsilon networks" id="enet" type="range" min="0" max="100" value="1" style="position:absolute; top:400px; width:100%;height:100px;-webkit-appearance:slider-vertical">
-      <span id="enet-label" class="label label-info" style="position:absolute;left:10px;top:510px;width:75%"><center>enet</center></span>
-      <form id="logiclist" style="position:absolute;left:20px;top:550px;">
+      <input title="filter based on distance from the reference" id="filter" type="range" min="0" max="150" value="1">
+      <span id="filter-label" class="label label-info">refdist</span>
+      <input  title="show epsilon networks" id="enet" type="range" min="0" max="100" value="1">
+      <span id="enet-label" class="label label-info">enet</span>
+      <form id="logiclist">
         <input id="aggregate-and" title="aggregate selection with AND" type="radio" name="op" value="and"> AND<br>
         <input id="aggregate-or" title="aggregate selection with OR" type="radio" name="op" value="or"> OR<br>
         <input id="aggregate-not" title="negate aggregated selection" type="checkbox" name="op" value="not"> NOT
-        <button id="aggregate-reset" class="btn btn-middle btn-block" type="reset" style="ws:pre"><i class="icon-repeat"></i> reset</button>
+        <button id="aggregate-reset" class="btn btn-middle btn-block" type="reset"><i class="icon-repeat"></i> reset</button>
       </form>
     </div>
     <div id="canvas"></div>
