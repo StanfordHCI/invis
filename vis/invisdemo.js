@@ -96,3 +96,9 @@ vis1.updateLinkToHeatmap(vis2);
 opts.pos.y = 60;
 opts.pos.x = 0;
 var vis4 = new RNAWorldStatvis(rnaworld,bp,opts)
+
+$(document).ready(function() {
+  $("button#export").click(function(event) {
+    document.getElementById('file-browse').click();
+  });
+});

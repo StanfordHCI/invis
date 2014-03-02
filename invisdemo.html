@@ -11,7 +11,7 @@
     <div id="panel-left">
       <input id="file-browse" type="file">
       <button class="btn btn-large btn-block btn-primary" type="button">load</button>
-      <button id="export" class="btn btn-large btn-block" type="button" onclick="document.getElementById('file-browse').click()">export<i class="icon-share-alt"></i></button>
+      <button id="export" class="btn btn-large btn-block" type="button">export<i class="icon-share-alt"></i></button>
       <button title="show/hide the reference sequence" id="refseq-button" class="btn btn-large btn-block" type="button">refseq</button>
       <button title="compute the shortest path from the reference to the selected sequence" id="path-button" class="btn btn-large btn-block" type="button">path</button>
       <input title="filter based on distance from the reference" id="filter" type="range" min="0" max="150" value="1">
@@ -30,6 +30,7 @@
     <div id="panel-bottom"></div>
   </div>
 
+  <script type="text/javascript" src="lib/jquery.js"></script>
   <script type="text/javascript" src="lib/d3.v2.js"></script>
   <script type="text/javascript" src="lib/colorbrewer.js"></script>
   <script type="text/javascript" src="invislayout.js"></script>
